@@ -1,15 +1,15 @@
 from flask import Flask, render_template, request, jsonify
 import google.generativeai as genai
 import os
-from dotenv import load_dotenv
-
-# Load environment variables
-load_dotenv()
-
-app = Flask(__name__)
 
 # Configure API Key securely
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+api_key = os.getenv("GEMINI_API_KEY")
+if not api_key:
+    raise ValueError("Missing GEMINI_API_KEY environment variable!")
+
+genai.configure(api_key=api_key)
+
+app = Flask(__name__)
 
 @app.route('/')
 def index():
@@ -31,10 +31,5 @@ def summarize():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Vercel requires a 'handler' function
-def handler(request, *args, **kwargs):
-    return app(request.environ, start_response)
-
 if __name__ == '__main__':
-    port = int(os.getenv("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)), debug=True)
