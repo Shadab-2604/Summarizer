@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,12 +12,42 @@
             --spacing-unit: 1rem;
         }
 
+        /* Light theme variables */
+        [data-theme="light"] {
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-color: #212529;
+            --border-color: rgba(0,0,0,0.1);
+            --summary-bg: #f8f9fa;
+            --input-bg: #ffffff;
+            --input-border: #ced4da;
+            --social-icon-bg: #f8f9fa;
+            --footer-bg: #ffffff;
+            --footer-shadow: rgba(0,0,0,0.05);
+        }
+
+        /* Dark theme variables */
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text-color: #e0e0e0;
+            --border-color: rgba(255,255,255,0.1);
+            --summary-bg: #363636;
+            --input-bg: #363636;
+            --input-border: #404040;
+            --social-icon-bg: #363636;
+            --footer-bg: #2d2d2d;
+            --footer-shadow: rgba(0,0,0,0.2);
+        }
+
         body {
-            background-color: #f0f2f5;
+            background-color: var(--bg-color);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             font-family: system-ui, -apple-system, sans-serif;
+            color: var(--text-color);
+            transition: background-color 0.3s ease;
         }
         
         .main-container {
@@ -39,21 +69,69 @@
             border: none;
             border-radius: var(--border-radius);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            background: white;
-            transition: transform 0.3s ease;
-        }
-
-        @media (max-width: 768px) {
-            .card {
-                margin: 0;
-                border-radius: calc(var(--border-radius) / 2);
-            }
+            background: var(--card-bg);
+            transition: transform 0.3s ease, background-color 0.3s ease;
         }
         
         .card-header {
             background: transparent;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
+            border-bottom: 1px solid var(--border-color);
             padding: 1.5rem;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+        }
+
+        .theme-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .theme-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 30px;
+        }
+
+        .theme-slider:before {
+            position: absolute;
+            content: "🌞";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        input:checked + .theme-slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .theme-slider:before {
+            transform: translateX(30px);
+            content: "🌙";
         }
 
         .card-title {
@@ -72,10 +150,15 @@
             max-height: 400px;
             padding: 1rem;
             transition: all 0.3s ease;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            border-color: var(--input-border);
         }
         
         textarea:focus {
             box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+            background-color: var(--input-bg);
+            color: var(--text-color);
         }
         
         .char-count {
@@ -105,7 +188,7 @@
         }
         
         .summary-box {
-            background-color: #f8f9fa;
+            background-color: var(--summary-bg);
             border-radius: calc(var(--border-radius) / 2);
             border-left: 4px solid var(--primary-color);
             margin-top: 1.5rem;
@@ -159,9 +242,10 @@
         .footer {
             padding: 2rem 1rem;
             text-align: center;
-            background: white;
+            background: var(--footer-bg);
             margin-top: auto;
-            box-shadow: 0 -4px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 -4px 8px var(--footer-shadow);
+            transition: background-color 0.3s ease;
         }
 
         .social-icons {
@@ -178,7 +262,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: #f8f9fa;
+            background: var(--social-icon-bg);
             transition: all 0.3s ease;
         }
 
@@ -190,6 +274,11 @@
         .social-icons img {
             width: 24px;
             height: 24px;
+            filter: var(--theme-icon-filter);
+        }
+
+        [data-theme="dark"] .social-icons img {
+            filter: invert(1);
         }
 
         @media (max-width: 576px) {
@@ -225,7 +314,13 @@
         <div class="container">
             <div class="card">
                 <div class="card-header">
-                    <h2 class="card-title">✨ Content Summarizer</h2>
+                    <div class="header-content">
+                        <h2 class="card-title">✨ Content Summarizer</h2>
+                        <label class="theme-toggle">
+                            <input type="checkbox" id="themeToggle">
+                            <span class="theme-slider"></span>
+                        </label>
+                    </div>
                 </div>
                 
                 <div class="card-body">
@@ -289,100 +384,132 @@
     </footer>
 
     <script>
-        function updateCharCount() {
-            const content = document.getElementById('content').value;
-            const count = content.length;
-            document.getElementById('charCount').textContent = 
-                `${count.toLocaleString()} character${count !== 1 ? 's' : ''}`;
-        }
+        // Theme handling
+    const themeToggle = document.getElementById('themeToggle');
+    
+    // Load saved theme preference
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    themeToggle.checked = savedTheme === 'dark';
 
-        function clearText() {
-            document.getElementById('content').value = '';
-            const summaryBox = document.getElementById('summary-box');
-            summaryBox.classList.add('d-none');
-            summaryBox.classList.remove('show');
-            updateCharCount();
-        }
+    // Theme toggle handler
+    themeToggle.addEventListener('change', function() {
+        const theme = this.checked ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+    });
 
-        function copyToClipboard() {
-            const summaryText = document.getElementById('summary').innerText;
-            navigator.clipboard.writeText(summaryText).then(() => {
-                showCopyFeedback();
-            });
-        }
+    function updateCharCount() {
+        const content = document.getElementById('content').value;
+        const count = content.length;
+        document.getElementById('charCount').textContent = 
+            `${count.toLocaleString()} character${count !== 1 ? 's' : ''}`;
+    }
 
-        function showCopyFeedback() {
-            const feedback = document.getElementById('copyFeedback');
-            feedback.classList.add('show');
-            setTimeout(() => {
-                feedback.classList.remove('show');
-            }, 2000);
-        }
+    function clearText() {
+        document.getElementById('content').value = '';
+        const summaryBox = document.getElementById('summary-box');
+        summaryBox.classList.add('d-none');
+        summaryBox.classList.remove('show');
+        updateCharCount();
+    }
 
-        function setLoading(isLoading) {
-            const btn = document.getElementById('summarizeBtn');
-            if (isLoading) {
-                btn.innerHTML = `
-                    <div class="spinner-border spinner-border-sm" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <span>Processing...</span>
-                `;
-                btn.disabled = true;
-            } else {
-                btn.innerHTML = '<span>Summarize Text</span>';
-                btn.disabled = false;
-            }
-        }
-
-        function summarizeText() {
-            const content = document.getElementById('content').value.trim();
-            if (!content) {
-                alert('Please enter some text to summarize.');
-                return;
-            }
-
-            setLoading(true);
-
-            fetch('/summarize', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.summary) {
-                    const summaryBox = document.getElementById('summary-box');
-                    document.getElementById('summary').innerText = data.summary;
-                    summaryBox.classList.remove('d-none');
-                    // Add a small delay before showing the animation
-                    setTimeout(() => {
-                        summaryBox.classList.add('show');
-                    }, 50);
-                } else {
-                    throw new Error(data.error || 'Failed to generate summary');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while summarizing the text. Please try again.');
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-        }
-
-        // Add event listener for Enter key in textarea
-        document.getElementById('content').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && e.ctrlKey) {
-                summarizeText();
-            }
+    function copyToClipboard() {
+        const summaryText = document.getElementById('summary').innerText;
+        navigator.clipboard.writeText(summaryText).then(() => {
+            showCopyFeedback();
         });
-    </script>
+    }
+
+    function showCopyFeedback() {
+        const feedback = document.getElementById('copyFeedback');
+        feedback.classList.add('show');
+        setTimeout(() => {
+            feedback.classList.remove('show');
+        }, 2000);
+    }
+
+    function setLoading(isLoading) {
+        const btn = document.getElementById('summarizeBtn');
+        if (isLoading) {
+            btn.innerHTML = `
+                <div class="spinner-border spinner-border-sm" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <span>Processing...</span>
+            `;
+            btn.disabled = true;
+        } else {
+            btn.innerHTML = '<span>Summarize Text</span>';
+            btn.disabled = false;
+        }
+    }
+
+    function summarizeText() {
+        const content = document.getElementById('content').value.trim();
+        if (!content) {
+            alert('Please enter some text to summarize.');
+            return;
+        }
+
+        setLoading(true);
+
+        fetch('/summarize', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.summary) {
+                const summaryBox = document.getElementById('summary-box');
+                document.getElementById('summary').innerText = data.summary;
+                summaryBox.classList.remove('d-none');
+                setTimeout(() => {
+                    summaryBox.classList.add('show');
+                }, 50);
+            } else {
+                throw new Error(data.error || 'Failed to generate summary');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while summarizing the text. Please try again.');
+        })
+        .finally(() => {
+            setLoading(false);
+        });
+    }
+
+    // Add event listeners for keyboard shortcuts
+    document.getElementById('content').addEventListener('keydown', function(e) {
+        // Ctrl/Cmd + Enter to summarize
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault();
+            summarizeText();
+        }
+    });
+
+    // Handle system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        if (!localStorage.getItem('theme')) {
+            const theme = e.matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+            themeToggle.checked = e.matches;
+        }
+    });
+
+    // Initialize theme based on system preference if no saved preference
+    if (!localStorage.getItem('theme')) {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+        themeToggle.checked = prefersDark;
+    }
+</script>
 </body>
 </html>
