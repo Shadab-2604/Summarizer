@@ -1,6 +1,11 @@
+# main.py
 from flask import Flask, render_template, request, jsonify
 import google.generativeai as genai
 import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Configure API Key securely
 api_key = os.getenv("GEMINI_API_KEY")
